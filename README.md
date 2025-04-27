@@ -1,56 +1,94 @@
-This is a base node project template, which anyone can use as it has been prepared, by keeping some of the most important code principles and project management recomendations. Feel free to change anything.
 
-`src` ->i Inside the src folder all the actuat source code regarding the project will reside, this will not include any kind of tests. (You might want to make separate tests folder)
 
-Lets take a took inside the `src` folder
-`config` -> In this folder anything  and everything regarding any configurations of setup of a library or module will be done. For example: setting up `dotenv`.
-so that we can use the environment variables anywhere in a cleaner fashion, this is done in the `server-config.js`.
 
-One more example can be to setup you logging library that can help you to prepare meaningful logs, so configuration for this library should also be done here.
+# 🛡️ API Gateway Service (Auth for AirplanSerive)
 
-`routes` -> In the routes folder, we register a route and the corresponding middleware and controllers to it.
+## 🛫 Description
+The API Gateway Service acts as the entry point for client requests, handling authentication and routing traffic to appropriate microservices.  
+It is built on Node.js with a clean modular architecture to ensure scalability, security, and ease of maintenance.  
+Designed to serve as a strong foundation for any microservices-based application.
 
-`middlewares` —> they are just going to intercept the incoming requests where we can write our validators, authenticators etc.
+---
 
-`controllers` —> they are kind Of the last middlewares as post them you call you business layer to execute the budiness logic. In controllers we just receive the incoming requests and data and then pass it to the business layer, and once business layer returns an output, we structure the API response in controllers and send the output. 
+## ✅ Features
+This project offers the following features:
 
-`repositories` -> this folder contains all the logic using which we interact the
-DB by writing queries, the raw queries or ORM queries wilt go here.
+- **RESTful API Architecture**: Organizes resources and routes cleanly using standard HTTP methods.
+- **Modular Codebase**: Well-separated folders for easy scalability and maintainability.
+- **Environment-based Configuration**: Manage different setups for development, test, and production environments using `.env` and `config.json`.
+- **Middleware Support**: Request interceptors like authenticators and validators for secure and validated APIs.
+- **Database Integration**: Connects seamlessly to SQL databases (MySQL) via Sequelize ORM.
+- **Structured Error Handling**: Consistent error responses and logging setup for easier debugging.
+- **Extensible Design**: Easily add new routes, services, or features without restructuring the code.
 
-`services` -> contains the buiness logic and interacts with repositories for data
-from the database.
+---
 
-`utils`-> contains helper methods, error classes etc.
+## 🔧 Prerequisites
+Ensure the following are installed before proceeding:
 
-### Setup the Projects
+- Node.js (v14 or higher)
+- npm (Node Package Manager)
+- MySQL (or any SQL dialect supported by Sequelize)
 
-- Download this template from github and open it in your favourite text editor.
--Go inside the folder path and exceute the following command:
-  ````
-  npm install 
-  ````
-- In the root directory create a .env file and add the following env variables
-  
-    ```
-      PORT=<port number of your choice>
-    ```
-ex:
-    ```
-      PORT=3000
-    ```
+### Additional Tools (Recommended)
+- Git: For version control.
+- Postman/cURL: For API testing.
+- Sequelize CLI: For managing database migrations and seeders.
+- VS Code: For efficient development.
+- Docker (optional): For containerized development and deployment.
 
-inside the `src/config` folder create a file aname as config.jason and write the following code:
+---
+
+## 📁 Folder Structure
+Project structure under the `src/` directory:
 
 ```
+src/
+│
+├── config/         # Configuration setup (dotenv, Sequelize DB config, logging, etc.)
+├── routes/         # Registers routes and links them with controllers and middleware
+├── controllers/    # Handle incoming requests, call services, and return API responses
+├── middlewares/    # Validate, authenticate, or manipulate incoming requests
+├── repositories/   # Direct database interaction (raw SQL/ORM queries)
+├── services/       # Core business logic (e.g., user authentication, token generation)
+├── utils/          # Utility functions (error classes, helper methods)
+└── index.js        # Entry point of the application
+```
+
+---
+
+## 🚀 Project Setup
+Follow these steps to set up and run the project locally:
+
+### 1. Clone and Install Dependencies
+```bash
+git clone https://github.com/ZBS-1910/API-Gateway.git
+cd API-Gateway
+npm install
+```
+
+### 2. Create a `.env` File
+Create a `.env` file in the root directory:
+
+```bash
+PORT=5000
+```
+*(You can choose any available port.)*
+
+---
+
+### 3. Set Up Database Configuration
+Inside the `src/config` folder, create a `config.json` file and add:
+
+```json
 {
   "development": {
     "username": "root",
-    "password": null,
-    "database": "database_development",
+    "password": null, //MySQL_password
+    "database": "database_development", //MySQL_DB-name
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
-
   "test": {
     "username": "root",
     "password": null,
@@ -58,7 +96,6 @@ inside the `src/config` folder create a file aname as config.jason and write the
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
-
   "production": {
     "username": "root",
     "password": null,
@@ -68,18 +105,56 @@ inside the `src/config` folder create a file aname as config.jason and write the
   }
 }
 ```
-- go inside the `src` folder and execute the following command:
-  ```
-  npx sequelize init
-  ```
--by excecuting above code you will get migrations ande seeders folder along with a congig.json inside the config folder.
 
-- If you; re setting up your development environment,then write the username of your db, password Of your db and in dialect mention whatever db you are using 
-for ex: mysql, mariadb etc.
+✅ **Update** `username`, `password`, and `database` as per your local or cloud database setup.
 
--If you're setting up test or prod environment, make sure you also replace the host with the hosted db url.
+---
 
-- To run the server execute
+### 4. Initialize Sequelize
+Inside the `src/` folder:
+
+```bash
+cd src
+npx sequelize init
 ```
+This will create:
+
+- `migrations/`
+- `models/`
+- `seeders/`
+- Update your `config/config.json`
+
+---
+
+### 5. Run Database Migrations
+To apply the DB schema:
+
+```bash
+cd src
+npx sequelize db:migrate
+```
+
+---
+
+### 6. Start the Server
+Run the application:
+
+```bash
 npm run dev
 ```
+
+If everything is set up correctly, you’ll see:
+
+```
+Server started at PORT 3000
+```
+Access the API at `http://localhost:5000`.
+
+---
+
+## 👤 Author
+- **Name**: Zameer Basha S  
+- **GitHub**: [ZBS-1910](https://github.com/ZBS-1910)  
+- **Email**: zameer1910basha@gmail.com
+
+---
