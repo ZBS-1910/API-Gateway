@@ -4,8 +4,11 @@ const router=express.Router();
 const {UserController}=require('../../controllers');
 
 
-router.post('/',
+router.post('/signup',
             UserController.signup
+        );
+router.post('/signin',
+            UserController.signin
         );
 
 
