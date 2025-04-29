@@ -41,7 +41,26 @@ async function signin(req,res){
                 .json(ErrorResponse);
    }
 }
+async function addRoleToUsers(req,res){
+    try{
+        const user= await UserService.addRoleUsers({
+            email:req.body.email,
+            password:req.body.password
+        });
+        SuccessResponse.data=user;
+        return res
+                .status(StatusCodes.CREATED)
+                .json(SuccessResponse);
+    }catch(error){
+        ErrorResponse.error=error;
+        return res
+                .status(error.statusCode)
+                .json(ErrorResponse);
+   }
+}
 module.exports={
     signup,
-    signin
+    signin,
+    addRoleToUsers
+
 }
