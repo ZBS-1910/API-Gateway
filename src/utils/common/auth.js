@@ -11,17 +11,17 @@ const {ServerConfig}=require('../../config');
         throw error;
     }
 }
- function creteTocken(input){
-    try{
-        return jwt.sign(ServerConfig.JWT_SECRET, { expiresIn: ServerConfig.JWT_EXPIRES_IN });
-    }catch(error){
-        console.log(error);
+ 
+function createToken(input) {
+    try {
+        return jwt.sign(input, ServerConfig.JWT_SECRET, { expiresIn: ServerConfig.JWT_EXPIRES_IN });
+    } catch (error) {
+        console.error('Error while creating token:', error);
         throw error;
     }
-
 }
 
 module.exports={
     checkPassword,
-    creteTocken
+    createToken
 }

@@ -21,28 +21,25 @@ async function createuser(data){
 
 } 
 
-
-async function signin(data){
-
-    try{
-        const user=await userRepo.getUserByEmail(data.email);
-        if(!user){
-            throw new AppError('User not found',StatusCodes.NOT_FOUND);
-        }
-       const passwordMatch= Auth.checkPassword(data.password,user.password);
-        if(!passwordMatch){
-            throw new AppError('Invalid password',StatusCodes.UNAUTHORIZED);
-        }
-        const jwt=Auth.creteTocken({id: user.id,email:user.email});
-        return jwt;
-        
-    }catch(error){
-        if(error instanceof AppError) throw error;
-        console.log("Service cought",error);
-        throw AppError('Somthing went wrong',StatusCodes.INTERNAL_SERVER_ERROR);
-
+async function signin(data) {
+    try {
+      const user = await userRepo.getUserByEmail(data.email);
+      if (!user) {
+        throw new AppError('User not found', StatusCodes.NOT_FOUND);
+      }
+      const passwordMatch = Auth.checkPassword(data.password, user.password);
+      if (!passwordMatch) {
+        throw new AppError('Invalid password', StatusCodes.UNAUTHORIZED);
+      }
+      const jwt = Auth.createToken({ id: user.id, email: user.email });
+      return jwt;
+    } catch (error) {
+      if (error instanceof AppError) throw error;
+      console.log("Service caught", error);
+      throw new AppError('Something went wrong', StatusCodes.INTERNAL_SERVER_ERROR);
     }
-}
+  }
+  
 
 
 module.exports={
