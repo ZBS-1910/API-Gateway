@@ -35,8 +35,8 @@ app.listen(ServerConfig.PORT,()=>{
  *        |
  *        v
  * localhost:3000(API Gateway)
- *       |
- *       v
+ *        |
+ *        v
  * localhost:3000/api/v1/flights 
  * 
  *  */
