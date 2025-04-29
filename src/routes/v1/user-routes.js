@@ -1,22 +1,13 @@
-const express=require('express');
-const router=express.Router();
+const express = require('express');
+const { UserController } = require('../../controllers');
+const { AuthMiddleware } = require('../../middlewares');
+const router = express.Router();
 
-const {UserController,InfoController}=require('../../controllers');
-const{AuthMiddleware}=require('../../middlewares')
-
-
-// api/v1/user/signup
 router.post('/signup',
-           // AuthMiddleware.validateAuthReqest,
+            AuthMiddleware.validateAuthReqest,
             UserController.signup);
-
-
-// api/v1/user/signin
 router.post('/signin',
             AuthMiddleware.validateAuthReqest,
             UserController.signin);
-
-
-
-
-module.exports=router;
+//router.post('/role',,AuthMiddleware.validateAuthReqest, AuthRequestMiddlewares.isAdmin, UserController.addRoleToUser);
+module.exports = router;
