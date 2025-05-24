@@ -6,7 +6,6 @@ const AppError = require('../utils/errors/app-error');
 class CrudRepository {
     constructor(model) {
         this.model = model;
-        console
     }
 
     async create(data) {
@@ -26,13 +25,27 @@ class CrudRepository {
         return response;
     }
 
+    async get(data) {
+        const response = await this.model.findByPk(data);
+        if(!response) {
+            throw new AppError('Not able to fund the resource', StatusCodes.NOT_FOUND);
+        }
+        return response;
+    }
+
     async getAll() {
         const response = await this.model.findAll();
         return response;
-        console.log("got  crud error",model);
     }
 
-    
+    async update(id, data) { // data -> {col: value, ....}
+        const response = await this.model.update(data, {
+            where: {
+                id: id
+            }
+        })
+        return response;
+    }
 }
 
 module.exports = CrudRepository;

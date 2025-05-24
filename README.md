@@ -1,16 +1,14 @@
+# API Gateway Service (Auth for AirplanSerive)
+This project is a simple API Gateway Service that handles authentication and routing for client requests.  
 
-
-
-# 🛡️ API Gateway Service (Auth for AirplanSerive)
-
-## 🛫 Description
+## Description
 The API Gateway Service acts as the entry point for client requests, handling authentication and routing traffic to appropriate microservices.  
 It is built on Node.js with a clean modular architecture to ensure scalability, security, and ease of maintenance.  
 Designed to serve as a strong foundation for any microservices-based application.
 
 ---
 
-## ✅ Features
+## Features
 This project offers the following features:
 
 - **RESTful API Architecture**: Organizes resources and routes cleanly using standard HTTP methods.
@@ -23,7 +21,7 @@ This project offers the following features:
 
 ---
 
-## 🔧 Prerequisites
+## Prerequisites
 Ensure the following are installed before proceeding:
 
 - Node.js (v14 or higher)
@@ -37,14 +35,12 @@ Ensure the following are installed before proceeding:
 - VS Code: For efficient development.
 - Docker (optional): For containerized development and deployment.
 
----
+--- 
 
-## 📁 Folder Structure
-Project structure under the `src/` directory:
-
+## Folder Structure
 ```
-src/
-│
+Project structure:
+
 ├── config/         # Configuration setup (dotenv, Sequelize DB config, logging, etc.)
 ├── routes/         # Registers routes and links them with controllers and middleware
 ├── controllers/    # Handle incoming requests, call services, and return API responses
@@ -55,106 +51,32 @@ src/
 └── index.js        # Entry point of the application
 ```
 
----
 
-## 🚀 Project Setup
-Follow these steps to set up and run the project locally:
-
-### 1. Clone and Install Dependencies
-```bash
-git clone https://github.com/ZBS-1910/API-Gateway.git
-cd API-Gateway
-npm install
+## API Endpoints
 ```
-
-### 2. Create a `.env` File
-Create a `.env` file in the root directory:
-
-```bash
-PORT=5000
+The API Gateway Service provides the following API endpoints:
 ```
-*(You can choose any available port.)*
-
----
-
-### 3. Set Up Database Configuration
-Inside the `src/config` folder, create a `config.json` file and add:
-
-```json
-{
-  "development": {
-    "username": "root",
-    "password": null, //MySQL_password
-    "database": "database_development", //MySQL_DB-name
-    "host": "127.0.0.1",
-    "dialect": "mysql"
-  },
-  "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
-  },
-  "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
-  }
-}
+### User Management
 ```
-
-✅ **Update** `username`, `password`, and `database` as per your local or cloud database setup.
-
----
-
-### 4. Initialize Sequelize
-Inside the `src/` folder:
-
-```bash
-cd src
-npx sequelize init
+- **POST /api/user/signup**: User registration
+- **POST /api/user/signin**: User login
+- **POST /api/user/role**: Add role to user (admin only)
 ```
-This will create:
-
-- `migrations/`
-- `models/`
-- `seeders/`
-- Update your `config/config.json`
-
----
-
-### 5. Run Database Migrations
-To apply the DB schema:
-
-```bash
-cd src
-npx sequelize db:migrate
+### System Information
 ```
-
----
-
-### 6. Start the Server
-Run the application:
-
-```bash
-npm run dev
+- **GET /api/info**: Get system information
 ```
-
-If everything is set up correctly, you’ll see:
-
+### Service APIs
 ```
-Server started at PORT 3000
+- **Flight Service**: /flights/*
+- **Booking Service**: /bookings/*
+- **Notification Service**: /notifications/*
 ```
-Access the API at `http://localhost:5000`.
-
----
-
-## 👤 Author
-- **Name**: Zameer Basha S  
-- **GitHub**: [ZBS-1910](https://github.com/ZBS-1910)  
-- **Email**: zameer1910basha@gmail.com
-
----
+### Security Features
+```
+- **Authentication middleware**: for protected routes
+- **Admin role verification**: for sensitive operations
+- **Rate limiting**: 30 requests per 2 minutes per IP
+- **CORS enabled**
+- **Error handling middleware**
+```

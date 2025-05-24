@@ -1,42 +1,80 @@
-
 const express = require('express');
+const rateLimit = require('express-rate-limit');
 const { createProxyMiddleware } = require('http-proxy-middleware');
+const cors = require('cors');
+const { ServerConfig } = require('./config/server-config');
+const apiRoutes= require('./routes')
+// Validate service URLs before starting the server
+ServerConfig.validateServiceUrls();
 
-const{ ServerConfig} = require('./config');
-const rateLimit =require( 'express-rate-limit')
-const apiroutes=require('./routes');
-const logger = require('./config/logger-config');
 const app = express();
 
-const limiter=rateLimit({
-    windowMs:2*60*1000, // 2 minutes
-    max:100, // limit each IP to 10 requests per windowMs 2 minutes
+// Middleware
+const limiter = rateLimit({
+    windowMs: 2 * 60 * 1000, // 2 minutes
+    max: 30, // Limit each IP to 30 requests per 2 minutes
 });
 
+app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
-
+app.use(express.urlencoded({ extended: true }));
 app.use(limiter);
-app.use('/api',apiroutes);
-app.use('/flightsService/api',apiroutes);
 
+// Proxy configurations
+const proxyOptions = {
+    changeOrigin: true,
+    secure: false,
+    onError: (err, req, res) => {
+        console.error('Proxy error:', err);
+        res.status(500).json({
+            error: 'Service unavailable',
+            details: err.message
+        });
+    },
+    onProxyRes: (proxyRes) => {
+        // Log response status for debugging
+        console.log(`Proxy response status: ${proxyRes.statusCode}`);
+    }
+};
 
-app.use('/flightsService',createProxyMiddleware({target:ServerConfig.FLIGHT_SERVICE,changeOrigin:true}));
-app.use('//bookingService',createProxyMiddleware({target:ServerConfig.BOOKING_SERVICE,changeOrigin:true}));
+// Flight Service Proxy
+app.use('/flightService', createProxyMiddleware({
+    ...proxyOptions,
+    target: ServerConfig.FLIGHT_SERVICE,
+    pathRewrite: {'^/flightService' : '/flightService'}
+}));
 
-app.listen(ServerConfig.PORT,()=>{
-    console.log(`Server is Up and running on port ${ServerConfig.PORT}`);
-    logger.info("Succefully started the server",{});
+// Booking Service Proxy
+app.use('/bookingsService', createProxyMiddleware({
+    ...proxyOptions,
+    target: ServerConfig.BOOKING_SERVICE,
+    pathRewrite: {'^/bookingsService' : '/bookingsService'}
+}));
+
+// Notification Service Proxy
+app.use('/notifService', createProxyMiddleware({
+    ...proxyOptions,
+    target: ServerConfig.NOTI_SERVICE,
+    pathRewrite: {'^/notifService' : '/notifService'}
+}));
+
+app.use('/api',apiRoutes)
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error('API Gateway Error:', err.stack);
+    res.status(err.status || 500).json({
+        error: 'Internal Server Error',
+        message: err.message,
+        timestamp: new Date().toISOString()
+    });
 });
 
-
-/**
- *       user
- *        |
- *        v
- * localhost:3000(API Gateway)
- *        |
- *        v
- * localhost:3000/api/v1/flights 
- * 
- *  */
+// Start server
+const PORT = ServerConfig.PORT;
+app.listen(PORT, () => {
+    console.log(`API Gateway running on port ${PORT}`);
+    console.log('Available services:');
+    console.log(`- Flight Service: ${ServerConfig.FLIGHT_SERVICE}`);
+    console.log(`- Booking Service: ${ServerConfig.BOOKING_SERVICE}`);
+    console.log(`- Notification Service: ${ServerConfig.NOTI_SERVICE}`);
+});
